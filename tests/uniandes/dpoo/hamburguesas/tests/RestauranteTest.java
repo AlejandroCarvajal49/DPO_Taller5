@@ -1,6 +1,7 @@
 package uniandes.dpoo.hamburguesas.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import uniandes.dpoo.hamburguesas.excepciones.HamburguesaException;
 import uniandes.dpoo.hamburguesas.excepciones.NoHayPedidoEnCursoException;
+import uniandes.dpoo.hamburguesas.excepciones.ProductoFaltanteException;
 import uniandes.dpoo.hamburguesas.excepciones.YaHayUnPedidoEnCursoException;
 import uniandes.dpoo.hamburguesas.mundo.Combo;
 import uniandes.dpoo.hamburguesas.mundo.Ingrediente;
@@ -19,6 +21,7 @@ import uniandes.dpoo.hamburguesas.mundo.Restaurante;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RestauranteTest {
 	
@@ -95,7 +98,7 @@ public void setUp() {
     itemsComboCorralQueso.add(corralQueso);
     itemsComboCorralQueso.add(papasMedianas);
     itemsComboCorralQueso.add(gaseosa);
-    Combo comboCorralQueso = new Combo("combo corral queso", 0.10, itemsComboCorralQueso);
+    Combo comboCorralQueso = new Combo("combo corralqueso", 0.10, itemsComboCorralQueso);
 
     ArrayList<ProductoMenu> itemsComboTodoterreno = new ArrayList<>();
     itemsComboTodoterreno.add(todoterreno);
@@ -215,15 +218,32 @@ public void setUp() {
 	
 	@Test
 	public void TestcargarInformacionRestaurante() throws NumberFormatException, HamburguesaException, IOException {
-	
-			File archivoMenu = new File("data/menu.txt");
-			File archivoCombos = new File("data/combos.txt");
-			File archivoIngredientes = new File("data/ingredientes.txt");
-            restaurantePrueba.cargarInformacionRestaurante(archivoMenu, archivoCombos, archivoIngredientes);
-            assertEquals(7, restaurantePrueba.getMenuBase().size(), "El menú base no se ha cargado correctamente");
-            assertEquals(4, restaurantePrueba.getMenuCombos().size(), "El menú de combos no se ha cargado correctamente");
-            assertEquals(19, restaurantePrueba.getIngredientes().size(), "Los ingredientes no se han cargado correctamente");
+		File archivoCombos = new File("./data/combos.txt");
+	    File archivoIngredientes = new File("./data/ingredientes.txt");
+	    File archivoMenu = new File("./data/menu.txt");
+	    Restaurante restaurante = new Restaurante();
+	    restaurante.cargarInformacionRestaurante(archivoIngredientes, archivoMenu, archivoCombos);
 
+	    List<Ingrediente> actualIngredientes = restaurante.getIngredientes();
+	    List<ProductoMenu> actualMenu = restaurante.getMenuBase();
+	    List<Combo> actualCombos = restaurante.getMenuCombos();
+
+	    // Debug statements
+	    System.out.println("Expected Ingredientes: " + ingredientes);
+	    System.out.println("Actual Ingredientes: " + actualIngredientes);
+	    System.out.println("Expected Menu: " + productos);
+	    System.out.println("Actual Menu: " + actualMenu);
+	    System.out.println("Expected Combos: " + combos);
+	    System.out.println("Actual Combos: " + actualCombos);
+
+	    // Assertions
+	    assertAll("Cargar Informacion Restaurante",
+	        () -> assertEquals(ingredientes, actualIngredientes, "Los ingredientes no se cargaron correctamente"),
+	        () -> assertEquals(productos, actualMenu, "El menu base no se cargo correctamente"),
+	        () -> assertEquals(combos, actualCombos, "El menu de combos no se cargo correctamente")
+	    );	
+			
+			
 	}
 	
 	@Test 
@@ -251,15 +271,16 @@ public void setUp() {
 	public void TestProductoFaltante() throws NumberFormatException, HamburguesaException, IOException {
 	
 
-		File archivoMenu = new File("data/ProductosSinUno.txt");
-		File archivoCombos = new File("data/combos.txt");
+		File archivoMenu = new File("data/menu.txt");
+		File archivoCombos = new File("data/combos2.txt");
 		File archivoIngredientes = new File("data/ingredientes.txt");
+		
 
 		boolean error = false;
 
 		try {
 			restaurantePrueba.cargarInformacionRestaurante(archivoMenu, archivoCombos, archivoIngredientes);
-		} catch (HamburguesaException e) {
+		} catch (ProductoFaltanteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			error = true;

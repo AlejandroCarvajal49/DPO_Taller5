@@ -1,4 +1,4 @@
-combo corral;0.10;corral;papas medianas;gaseosa
-combo corral queso;0.10;corral queso;papas medianas;gaseosa
-combo todoterreno;0.07;todoterreno;papas grandes;gaseosa
-combo especial;0.095;especial;papas medianas;gaseosa
+combo corral;10%;corral;papas medianas;gaseosa
+combo corral queso;10%;corral queso;papas medianas;gaseosa
+combo todoterreno;7%;todoterreno;papas grandes;gaseosa
+combo especial;9.5%;especial;papas medianas;gaseosa
